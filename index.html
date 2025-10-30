@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guardião Digital +60</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Barra de janela -->
+  <header class="window-bar" aria-label="Barra da janela">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+  </header>
+
+  <!-- TELAS -->
+  <main id="screen-home" class="screen active" aria-labelledby="home-title">
+    <section class="welcome">
+      <h1 id="home-title">
+        Bem-vindo ao<br /><span>Guardião digital +60</span>
+      </h1>
+      <p class="subtitle">Seu assistente contra golpes digitais</p>
+
+      <h2 class="cta-title">Entre com seu email</h2>
+      <div class="mascot" aria-hidden="true">🐱🛡️</div>
+
+      <form class="signup" onsubmit="return false">
+        <label class="sr-only" for="email">Email</label>
+        <input id="email" type="email" inputmode="email" placeholder="email@dominio.com" autocomplete="email" />
+        <button class="btn primary" id="to-shield">Continuar</button>
+      </form>
+
+      <div class="divider"><span>ou</span></div>
+      <button class="btn neutral"><span class="ico">🟡</span> Continuar com o Google</button>
+      <button class="btn neutral"><span class="ico">⚫</span> Continuar com a Apple</button>
+
+      <p class="terms">
+        Ao clicar em continuar, você concorda com os nossos<br />
+        <a href="#">Termos de Serviço</a> e a <a href="#">Política de Privacidade</a>.
+      </p>
+    </section>
+  </main>
+
+  <main id="screen-shield" class="screen" aria-labelledby="alert-title">
+    <section class="chat">
+      <div class="alert-card" role="alert" aria-live="assertive">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body">
+          <h2 id="alert-title">ALERTA DE GOLPE</h2>
+          <p id="alert-text">Mensagem suspeita detectada: “Seu neto precisa de dinheiro urgente!”</p>
+        </div>
+      </div>
+
+      <div class="bubble">Olá <strong>Maria</strong>! Detectamos uma possível tentativa de golpe no seu WhatsApp.</div>
+      <div class="bubble">Você reconhece este contato? <span id="suspect-phone">+55 11 98765-4321</span></div>
+
+      <div class="actions">
+        <button class="btn danger" id="btn-block">Bloquear</button>
+        <button class="btn primary" id="btn-safe">É seguro</button>
+      </div>
+    </section>
+  </main>
+
+  <main id="screen-alerts" class="screen" aria-labelledby="alerts-title">
+    <section class="chat">
+      <h2 id="alerts-title" style="margin:8px 0 12px;">Seus alertas</h2>
+      <div id="alerts-list" style="display:grid; gap:10px;"></div>
+    </section>
+  </main>
+
+  <main id="screen-profile" class="screen" aria-labelledby="profile-title">
+    <section class="chat">
+      <h2 id="profile-title" style="margin:8px 0 12px;">Perfil</h2>
+      <p class="bubble">Nome: Maria</p>
+      <p class="bubble">Preferência: avisos por WhatsApp e notificação</p>
+      <p class="bubble">Status da API: <strong id="api-status">verificando...</strong></p>
+    </section>
+  </main>
+
+  <!-- Tabbar -->
+  <nav class="tabbar" aria-label="Navegação">
+    <button class="tab active" data-goto="home"   title="Início">🏠</button>
+    <button class="tab"         data-goto="shield" title="Proteção">🛡️</button>
+    <button class="tab"         data-goto="alerts" title="Alertas">🔔</button>
+    <button class="tab"         data-goto="profile" title="Perfil">👤</button>
+  </nav>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

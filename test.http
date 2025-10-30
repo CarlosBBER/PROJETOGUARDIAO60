@@ -1,0 +1,29 @@
+GET http://localhost:3000/health
+
+POST http://localhost:3000/v1/links/check
+x-api-key: dev-123
+Content-Type: application/json
+
+{
+  "url": "http://bit.ly/qualquercoisa"
+}
+
+POST http://localhost:3000/v1/reports
+x-api-key: dev-123
+Content-Type: application/json
+
+{
+  "url": "http://exemplo.com",
+  "description": "mensagem pedindo pix e senha",
+  "reporterHash": "aluno123",
+  "evidence": ["print1.png"]
+}
+
+GET http://localhost:3000/v1/reports/1
+x-api-key: dev-123
+
+GET http://localhost:3000/v1/alerts?status=new
+x-api-key: dev-123
+
+PATCH http://localhost:3000/v1/alerts/1/ack
+x-api-key: dev-123

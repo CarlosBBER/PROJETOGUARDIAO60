@@ -1,0 +1,129 @@
+:root{
+    --bg: #F8F1DE;      /* bege suave */
+    --panel: #ffffff;
+    --ink: #1f2937;     /* cinza-escuro legível */
+    --muted: #6b7280;
+    --blue: #3b82f6;    /* botões */
+    --blue-strong: #2563eb;
+    --red: #ef4444;
+    --red-strong: #dc2626;
+    --shadow: 0 8px 22px rgba(0,0,0,.08);
+    --radius: 16px;
+  }
+  
+  *{ box-sizing: border-box }
+  html, body { height: 100% }
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  
+  /* Barra com bolinhas */
+  .window-bar{
+    height: 56px;
+    background: #E6E0D0;
+    display:flex; align-items:center; gap:10px;
+    padding: 0 16px;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+  }
+  .dot{ width:14px; height:14px; border-radius:50% ; display:inline-block }
+  .red{ background:#EF4444 } .yellow{ background:#F59E0B } .green{ background:#10B981 }
+  
+  /* Telas */
+  .screen{ display:none; min-height: calc(100dvh - 56px); padding: 20px; }
+  .screen.active{ display:block }
+  
+  /* Welcome */
+  .welcome{ max-width: 520px; margin: 0 auto; text-align:center }
+  .welcome h1{
+    font-size: clamp(26px, 6vw, 40px);
+    line-height:1.15; margin: 12px 0 4px;
+  }
+  .welcome h1 span{ color: var(--blue-strong) }
+  .subtitle{ color: var(--muted); margin: 0 0 16px }
+  
+  .cta-title{ font-size: 18px; margin: 12px 0 8px }
+  
+  .mascot{ font-size: 72px; margin: 8px 0 12px }
+  
+  .signup{ display:grid; gap: 10px; margin: 10px 0 12px }
+  .signup input{
+    height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid #e5e7eb;
+    background: var(--panel); outline: none; font-size: 16px;
+  }
+  .signup input:focus{ border-color: var(--blue) }
+  
+  .btn{
+    height: 48px; padding: 0 18px; border-radius: 12px; border: none; cursor: pointer;
+    font-weight: 600; font-size: 16px;
+    box-shadow: var(--shadow);
+  }
+  .btn.primary{ background: var(--blue); color:#fff }
+  .btn.primary:hover{ background: var(--blue-strong) }
+  .btn.neutral{ background: #f3f4f6 }
+  .btn.neutral .ico{ margin-right:8px }
+  .btn.danger{ background: var(--red); color:#fff }
+  .btn.danger:hover{ background: var(--red-strong) }
+  
+  .divider{
+    display:flex; align-items:center; justify-content:center; gap:12px; color: var(--muted);
+    margin: 8px 0 10px;
+  }
+  .divider:before, .divider:after{
+    content:""; height:1px; background:#e5e7eb; flex:1; max-width:120px;
+  }
+  .linklike{ background:none; border:none; color: var(--blue-strong); font-weight:700; cursor:pointer; margin-top:8px }
+  
+  .terms{ color: var(--muted); font-size: 13px; margin-top: 10px }
+  .terms a{ color: var(--blue-strong); text-decoration: none }
+  
+  /* Chat / alerta */
+  .chat{ max-width: 520px; margin: 0 auto 84px; padding-top: 6px }
+  .alert-card{
+    display:flex; gap:12px; padding:14px; background:#fce7f3;
+    border-radius: var(--radius); border-left: 6px solid #ef4444; margin: 10px 0 14px;
+    box-shadow: var(--shadow);
+  }
+  .alert-icon{ font-size: 22px; }
+  .alert-body h2{ margin: 0 0 4px; font-size: 16px }
+  .alert-body p{ margin:0; color:#7c243b }
+  
+  .bubble{
+    background:#e5e7eb; padding:14px 16px; border-radius: 16px;
+    width: fit-content; max-width: 100%; margin: 10px 0 0; box-shadow: var(--shadow);
+  }
+  
+  /* Ações */
+  .actions{ display:flex; gap:16px; justify-content: center; margin: 24px 0 }
+  
+  /* Tab bar inferior */
+  .tabbar{
+    position: fixed; left:0; right:0; bottom:0;
+    background: #3577F0; padding: 10px 14px; display:flex; gap: 16px; justify-content: space-around;
+  }
+  .tab{
+    background: transparent; color: #eaf2ff; border:none; font-size: 26px; cursor:pointer; padding: 6px 10px;
+    border-radius: 12px;
+  }
+  .tab.active{ background: rgba(255,255,255,.22) }
+  
+  /* Toast */
+  #toast{
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: 92px; background: #111827; color: #fff;
+    padding: 10px 14px; border-radius: 10px; display:none; box-shadow: var(--shadow);
+  }
+  
+  /* Utilitários & Acessibilidade */
+  .sr-only{
+    position:absolute !important; clip: rect(1px, 1px, 1px, 1px);
+    padding:0 !important; border:0 !important; height:1px !important; width:1px !important; overflow:hidden;
+  }
+  
+  /* Desktop */
+  @media (min-width: 840px){
+    .chat, .welcome{ max-width: 680px }
+  }
+  
