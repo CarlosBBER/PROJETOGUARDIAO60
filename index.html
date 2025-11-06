@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guardião60+</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <section class="screen active" id="screen-login">
+    <div class="hero">
+      <img class="hero-img" alt="Escudo"
+           src="https://raw.githubusercontent.com/tailwindlabs/heroicons/master/optimized/solid/shield-check.svg">
+      <h1>Seu Guardião <span class="accent">Digital +60</span></h1>
+      <p>Protegendo você contra golpes e mensagens suspeitas 💙</p>
+    </div>
+
+    <div class="login-box">
+      <input id="login-email" type="email" placeholder="email@dominio.com" autocomplete="email">
+      <input id="login-pass"  type="password" placeholder="sua senha" autocomplete="current-password">
+      <div class="row">
+        <button id="btn-signup" class="btn primary">Criar conta</button>
+        <button id="btn-login"  class="btn neutral">Entrar</button>
+      </div>
+      <div class="divider">ou</div>
+      <button id="btn-google" class="btn google">Continuar com Google</button>
+      <button id="btn-apple"  class="btn apple">Continuar com Apple</button>
+      <button id="btn-guest"  class="btn guest">Entrar sem login</button>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="screen-home">
+    <h2>Bem-vindo(a) ao Guardião60+</h2>
+    <p>Detecte e evite golpes com apenas um toque.</p>
+    <div class="options">
+      <button id="to-shield" class="btn primary">🛡️ Verificar mensagens</button>
+      <button id="to-tips"   class="btn neutral">💡 Dicas de segurança</button>
+    </div>
+  </section>
+
+  <!-- PROTEÇÃO -->
+  <section class="screen" id="screen-shield">
+    <div class="alert-box">
+      <p class="alert-title">⚠️ Alerta!</p>
+      <p>Mensagem suspeita detectada: <br><em>"Seu neto precisa de dinheiro urgente!"</em></p>
+    </div>
+    <div class="actions">
+      <button id="btn-block"   class="btn danger">🚫 Marcar como golpe</button>
+      <button id="btn-safe"    class="btn primary">✅ É seguro</button>
+      <button id="btn-analyze" class="btn neutral">🔍 Analisar outro link</button>
+    </div>
+  </section>
+
+  <!-- DICAS -->
+  <section class="screen" id="screen-tips">
+    <h2>Dicas de segurança 💡</h2>
+    <div id="tips-box" class="tips"></div>
+  </section>
+
+  <!-- ALERTAS -->
+  <section class="screen" id="screen-alerts">
+    <h2>Seus alertas</h2>
+    <div id="alerts-list" class="alerts-list">
+      <div class="bubble">Carregando…</div>
+    </div>
+  </section>
+
+  <!-- PERFIL -->
+  <section class="screen" id="screen-profile">
+    <h2>Perfil</h2>
+    <p>Conectado via: <span id="profile-provider">Visitante</span></p>
+    <button id="btn-logout" class="btn danger">Sair</button>
+  </section>
+
+  <!-- TABBAR -->
+  <footer class="tabbar">
+    <div class="tab active" data-goto="home">🏠</div>
+    <div class="tab" data-goto="shield">🛡️</div>
+    <div class="tab" data-goto="tips">💡</div>
+    <div class="tab" data-goto="alerts">🔔</div>
+    <div class="tab" data-goto="profile">👤</div>
+  </footer>
+
+  <div id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

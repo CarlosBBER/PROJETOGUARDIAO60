@@ -1,0 +1,21 @@
+{
+  "name": "guardiao60plus",
+  "version": "1.0.0",
+  "description": "Guardião60+ - Assistente contra golpes digitais",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.15.3",
+    "pino": "^10.1.0",
+    "pino-http": "^11.0.0",
+    "rate-limiter-flexible": "^8.1.0"
+  }
+}
