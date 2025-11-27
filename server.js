@@ -165,6 +165,67 @@ app.post('/v1/reports', rateLimit, apiKey, async (req,res)=>{
     severity = severityFromScore(score);
   }
 
+// ===== Analisar MENSAGEM de texto (detecta risco e URLs) =====
+app.post('/v1/messages/analyze', rateLimit, apiKey, async (req, res) => {
+  const { text = '' } = req.body || {};
+  const raw = String(text || '').trim();
+  if (!raw) return res.status(400).json({ error: 'empty_text' });
+
+  // 1) Extrai URLs simples do texto
+  const urlRegex = /\bhttps?:\/\/[^\s)]+/gi;
+  const urls = (raw.match(urlRegex) || []).slice(0, 5); // limita pra não abusar
+
+  // 2) Heurística por palavras-chave
+  const riskyWords = ['pix','senha','código','urgente','bloqueio','confirme','premio','prêmio','ganhou','banco','cartão','link','transferência','neto','dinheiro'];
+  const lower = raw.toLowerCase();
+  const hits = riskyWords.filter(w => lower.includes(w));
+
+  // 3) Score inicial por texto
+  let score = 0;
+  const reasons = [];
+  if (hits.length >= 1) { score += 20; reasons.push('risky_keywords'); }
+  if (hits.length >= 3) { score += 20; reasons.push('many_risky_keywords'); }
+  if (urls.length >= 1) { score += 10; reasons.push('contains_urls'); }
+
+  // 4) Se houver URLs, aproveita heurística de links e aumenta score
+  const linkChecks = [];
+  for (const uStr of urls) {
+    const norm = normalizeUrl(uStr);
+    if (!norm) continue;
+    const u = new URL(norm);
+    const local = heuristicScore(u);
+    score = Math.max(score, local.score); // considera o pior caso
+    reasons.push(...local.reasons.filter((r) => !reasons.includes(r)));
+    linkChecks.push({ url: norm, localScore: local.score, reasons: local.reasons });
+  }
+
+  // 5) Severidade final
+  const severity = severityFromScore(score);
+
+  // 6) Persistência mínima: se houver link suspeito OU texto sugerir risco → cria Alert
+  const conn = await pool.getConnection();
+  try {
+    if (severity !== 'low' || hits.length >= 2) {
+      await conn.execute(
+        'INSERT INTO alerts (type,url,description,severity,score,status) VALUES (?,?,?,?,?,?)',
+        ['REPORT_SUSPECT', urls[0] || null, raw.slice(0, 500), severity, score, 'new']
+      );
+    }
+  } finally {
+    conn.release();
+  }
+
+  res.json({
+    message: 'analyzed',
+    textSummary: { riskyWords: hits, urlsFound: urls },
+    score,
+    severity,
+    reasons: Array.from(new Set(reasons)),
+    linkChecks
+  });
+});
+
+
   const riskyText = String(description||'').toLowerCase();
   const textSuggestsRisk = ['pix','senha','cobrança','bloqueio','link','golpe','phishing'].some(k=>riskyText.includes(k));
 
@@ -187,21 +248,68 @@ app.post('/v1/reports', rateLimit, apiKey, async (req,res)=>{
   } finally { conn.release(); }
 });
 
-// Alertas
-app.get('/v1/alerts', apiKey, async (req,res)=>{
-  const status = req.query.status==='ack' ? 'ack' : 'new';
+// === Listar alertas ===
+app.get("/v1/alerts", apiKey, async (req, res) => {
+  try {
+    const status = req.query.status || "new";
+    const limit = parseInt(req.query.limit || 20);
+    const offset = parseInt(req.query.offset || 0);
+
+    const [rows] = await pool.execute(
+      `SELECT id,type,url,description,severity,score,status,created_at
+       FROM alerts
+       WHERE status = ?
+       ORDER BY created_at DESC
+       LIMIT ? OFFSET ?`,
+      [status, limit, offset]
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error("[/v1/alerts] erro:", err);
+    res.status(500).json({ error: "DB query failed", details: err.message });
+  }
+});
+
+
+// Export CSV de alertas (honra os mesmos filtros de /v1/alerts)
+app.get('/v1/alerts/export.csv', apiKey, async (req, res) => {
+  const status   = (req.query.status === 'ack' ? 'ack' : 'new');
+  const severity = (['low','medium','high'].includes(String(req.query.severity)) ? String(req.query.severity) : null);
+  const q        = (req.query.q || '').trim();
+
+  const where = ['status = ?'];
+  const args  = [status];
+  if (severity) { where.push('severity = ?'); args.push(severity); }
+  if (q) { where.push('(description LIKE ? OR url LIKE ?)'); args.push(`%${q}%`, `%${q}%`); }
+  const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
   const [rows] = await pool.execute(
-    'SELECT id,type,url,description,severity,score,status,created_at FROM alerts WHERE status=? ORDER BY created_at DESC',
-    [status]
+    `SELECT id,type,url,description,severity,score,status,created_at,ack_at
+       FROM alerts
+      ${whereSql}
+      ORDER BY created_at DESC`,
+    args
   );
-  res.json(rows);
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="alerts.csv"');
+
+  const header = 'id,type,url,description,severity,score,status,created_at,ack_at\n';
+  const esc = (v) => {
+    if (v == null) return '';
+    const s = String(v).replaceAll('"','""');
+    return `"${s}"`;
+  };
+
+  const lines = rows.map(r =>
+    [r.id, r.type, r.url, r.description, r.severity, r.score, r.status, r.created_at, r.ack_at]
+      .map(esc).join(',')
+  );
+  res.send(header + lines.join('\n'));
 });
-app.patch('/v1/alerts/:id/ack', apiKey, async (req,res)=>{
-  const id = Number(req.params.id);
-  const [r] = await pool.execute('UPDATE alerts SET status="ack", ack_at=NOW() WHERE id=?',[id]);
-  if (r.affectedRows===0) return res.status(404).json({error:'not_found'});
-  res.json({ ok:true, id });
-});
+
+
 
 // Auth: signup/login
 app.post('/auth/signup', async (req,res)=>{
