@@ -1,144 +1,183 @@
-// app.js — Guardião60+ atualizado com alertas e acessibilidade
+// ===============================
+// CONFIG
+// ===============================
+const API = "/v1";
+const KEY = "dev-123";
 
-// ===== CONFIG =====
-const API_KEY = "dev-123"; // mesma chave do .env
-const API_BASE = "/v1";
+// ===============================
+// FUNÇÃO PADRÃO DE REQUISIÇÃO
+// ===============================
+async function api(path, data = null, method = "GET") {
+  const opt = {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": KEY,
+    }
+  };
 
-// ===== FUNÇÕES DE ACESSIBILIDADE =====
-document.addEventListener("DOMContentLoaded", () => {
-  // alternar contraste
-  document.getElementById("btn-contrast")?.addEventListener("click", () => {
-    document.body.classList.toggle("high-contrast");
-    localStorage.setItem("contrast", document.body.classList.contains("high-contrast"));
+  if (data) opt.body = JSON.stringify(data);
+
+  const r = await fetch(API + path, opt);
+  if (!r.ok) {
+    const e = await r.text().catch(() => "");
+    throw new Error(`API ${r.status} ${e}`);
+  }
+  return r.json();
+}
+
+// ===============================
+// TOAST
+// ===============================
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 2500);
+}
+
+// ===============================
+// NAVEGAR ENTRE TELAS
+// ===============================
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById("screen-" + id).classList.add("active");
+
+  if (id === "alerts") loadAlerts();
+}
+
+// Tabbar
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    show(tab.dataset.goto);
   });
-
-  // alternar fonte maior
-  document.getElementById("btn-font")?.addEventListener("click", () => {
-    document.body.classList.toggle("big-font");
-    localStorage.setItem("bigfont", document.body.classList.contains("big-font"));
-  });
-
-  // idioma
-  document.getElementById("lang-select")?.addEventListener("change", (e) => {
-    localStorage.setItem("lang", e.target.value);
-    location.reload();
-  });
-
-  // restaurar preferências
-  if (localStorage.getItem("contrast") === "true") document.body.classList.add("high-contrast");
-  if (localStorage.getItem("bigfont") === "true") document.body.classList.add("big-font");
-  const langSel = document.getElementById("lang-select");
-  if (langSel && localStorage.getItem("lang")) langSel.value = localStorage.getItem("lang");
-
-  // carregar alertas ao iniciar
-  loadAlerts();
 });
 
-// ===== FUNÇÃO AUXILIAR =====
-async function apiJSON(path, opts = {}) {
-  const res = await fetch(API_BASE + path, {
-    headers: {
-      "x-api-key": API_KEY,
-      "Content-Type": "application/json",
-    },
-    ...opts,
-  });
-  if (!res.ok) throw new Error(`Erro HTTP ${res.status}`);
-  return res.json();
-}
+// ===============================
+// LOGIN
+// ===============================
+document.getElementById("btn-login")?.addEventListener("click", async () => {
+  const email = login-email.value;
+  const pass = login-pass.value;
 
-function toast(msg) {
-  alert(msg); // simples — pode trocar por elemento bonito futuramente
-}
-
-// ===== ANALISAR MENSAGEM =====
-document.getElementById("btn-analyze-msg")?.addEventListener("click", async () => {
-  const text = prompt("Cole a mensagem suspeita aqui:");
-  if (!text) return;
   try {
-    const r = await apiJSON("/messages/analyze", {
-      method: "POST",
-      body: JSON.stringify({ text }),
-    });
-    toast(`Análise: ${r.severity.toUpperCase()} (score ${r.score})`);
-    if (r.severity !== "low") {
-      show("alerts");
-      loadAlerts();
-    }
-  } catch (err) {
-    toast("Não foi possível analisar a mensagem.");
-    console.error(err);
+    await api("/auth/login", { email, password: pass }, "POST");
+    show("home");
+  } catch (e) {
+    toast("Erro ao entrar: " + e.message);
   }
 });
 
-// ===== FUNÇÃO PARA CARREGAR ALERTAS =====
-async function loadAlerts() {
-  const container = document.getElementById("alerts-list");
-  if (!container) return;
-
-  container.innerHTML = "<p>Carregando alertas...</p>";
+// ===============================
+// SIGNUP
+// ===============================
+document.getElementById("btn-signup")?.addEventListener("click", async () => {
+  const email = login-email.value;
+  const pass = login-pass.value;
 
   try {
-    const res = await fetch(`${API_BASE}/alerts?status=new`, {
-      headers: { "x-api-key": API_KEY },
-    });
-    if (!res.ok) throw new Error("Erro ao carregar alertas");
-    const data = await res.json();
+    await api("/auth/signup", { email, password: pass }, "POST");
+    toast("Conta criada!");
+  } catch (e) {
+    toast("Erro ao criar conta: " + e.message);
+  }
+});
 
-    if (!data.length) {
-      container.innerHTML = "<p>Nenhum alerta encontrado.</p>";
+// ===============================
+// CARREGAR DICAS
+// ===============================
+async function loadTips() {
+  const box = document.getElementById("tips-box");
+  box.innerHTML = "Carregando...";
+  try {
+    const tips = await api("/tips");
+    box.innerHTML = tips.map(t => `<div class="tip">${t}</div>`).join("");
+  } catch {
+    box.innerHTML = "<div class='bubble'>Erro ao carregar dicas.</div>";
+  }
+}
+
+document.getElementById("to-tips")?.addEventListener("click", () => {
+  show("tips");
+  loadTips();
+});
+
+// ===============================
+// CARREGAR ALERTAS
+// ===============================
+async function loadAlerts() {
+  const box = document.getElementById("alerts-list");
+  box.innerHTML = "<div class='bubble'>Carregando...</div>";
+
+  try {
+    const rows = await api("/alerts");
+    if (!rows.length) {
+      box.innerHTML = "<div class='bubble'>Nenhum alerta encontrado.</div>";
       return;
     }
 
-    container.innerHTML = data
-      .map(
-        (a) => `
+    box.innerHTML = rows.map(a => `
       <div class="alert-card ${a.severity}">
-        <div class="alert-header">
-          <strong>${a.type}</strong>
-          <span class="severity-tag ${a.severity}">${a.severity}</span>
+        <div class="title">${a.type}</div>
+        <div class="desc">${a.description}</div>
+        <div class="meta">
+          Severidade: <strong>${a.severity}</strong> · Score: ${a.score}
         </div>
-        <p>${a.description || "(sem descrição)"}</p>
-        ${
-          a.url
-            ? `<a href="${a.url}" target="_blank" rel="noopener">🔗 Ver link</a>`
-            : ""
-        }
-        <small>
-          Score: ${a.score ?? "N/A"}<br>
-          Criado em: ${new Date(a.created_at).toLocaleString()}
-        </small>
+        <small>${new Date(a.created_at).toLocaleString()}</small>
       </div>
-    `
-      )
-      .join("");
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "<p>Erro ao carregar alertas.</p>";
+    `).join("");
+  } catch (e) {
+    box.innerHTML = "<div class='bubble'>Erro ao carregar alertas.</div>";
   }
 }
 
-// ===== ESTILOS AUXILIARES =====
-const style = document.createElement("style");
-style.textContent = `
-  .high-contrast { background: #000 !important; color: #fff !important; }
-  .big-font { font-size: 1.2em; }
-  .alert-card {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    padding: 12px;
-    border-radius: 12px;
-    margin: 8px auto;
-    max-width: 700px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+// ===============================
+// ANALISAR MENSAGEM
+// ===============================
+document.getElementById("btn-analyze-msg")?.addEventListener("click", async () => {
+  const text = prompt("Cole a mensagem suspeita:");
+  if (!text) return;
+
+  try {
+    const r = await api("/messages/analyze", { text }, "POST");
+    toast(`Resultado: ${r.severity.toUpperCase()} (score ${r.score})`);
+    loadAlerts();
+  } catch (e) {
+    toast("Erro ao analisar mensagem: " + e.message);
   }
-  .alert-card.low { border-left: 6px solid #22c55e; }
-  .alert-card.medium { border-left: 6px solid #facc15; }
-  .alert-card.high { border-left: 6px solid #ef4444; }
-  .alert-header { display: flex; justify-content: space-between; align-items: center; }
-  .severity-tag { font-size: 0.8em; padding: 2px 6px; border-radius: 6px; text-transform: uppercase; color: #fff; }
-  .severity-tag.low { background: #22c55e; }
-  .severity-tag.medium { background: #facc15; color: #000; }
-  .severity-tag.high { background: #ef4444; }
-`;
-document.head.appendChild(style);
+});
+
+// ===============================
+// MARCAR COMO GOLPE
+// ===============================
+document.getElementById("btn-block")?.addEventListener("click", async () => {
+  try {
+    await api("/alerts/report", {}, "POST");
+    toast("Registrado como golpe!");
+    loadAlerts();
+  } catch (e) {
+    toast("Erro ao registrar golpe: " + e.message);
+  }
+});
+
+// ===============================
+// MARCAR COMO SEGURO
+// ===============================
+document.getElementById("btn-safe")?.addEventListener("click", async () => {
+  try {
+    await api("/alerts/safe", {}, "POST");
+    toast("Registrado como seguro!");
+    loadAlerts();
+  } catch (e) {
+    toast("Erro ao registrar segurança: " + e.message);
+  }
+});
+
+// ===============================
+// VERIFICAR MENSAGENS (ABRIR TELA)
+// ===============================
+document.getElementById("to-shield")?.addEventListener("click", () => {
+  show("shield");
+});

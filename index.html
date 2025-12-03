@@ -8,73 +8,35 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<section id="alerts-section" style="display:none;">
-  <h2>Seus alertas</h2>
-  <div id="alerts-list" class="alerts-container">
-    <p>Carregando alertas...</p>
-  </div>
-</section>
-
-<script src="app.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    await loadAlerts(); // função que já existe no app.js
-    document.getElementById("alerts-section").style.display = "block";
-  });
-</script>
-
-<div id="accessibility-bar" style="display:flex;gap:10px;justify-content:center;margin:10px;">
-  <select id="lang-select">
-    <option value="pt">Português</option>
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select>
-  <button id="btn-contrast">Alto contraste</button>
-  <button id="btn-font">Fonte maior</button>
-</div>
-
-<script>
-document.getElementById("btn-contrast").addEventListener("click", () => {
-  document.body.classList.toggle("high-contrast");
-});
-
-document.getElementById("btn-font").addEventListener("click", () => {
-  document.body.classList.toggle("big-font");
-});
-
-document.getElementById("lang-select").addEventListener("change", (e) => {
-  const lang = e.target.value;
-  localStorage.setItem("lang", lang);
-  location.reload(); // recarrega com o idioma escolhido
-});
-</script>
-
-
 <body>
+
+  <!-- Alertas -->
+  <section id="alerts-section" style="display:none;">
+    <h2>Seus alertas (prévia)</h2>
+    <div id="alerts-preview" class="alerts-container">
+      <p>Carregando alertas...</p>
+    </div>
+</section>
 
   <!-- LOGIN -->
   <section class="screen active" id="screen-login">
     <div class="hero">
-      <!-- SVG embutido (evita conflitos de imagem) -->
       <svg class="hero-img" viewBox="0 0 24 24" width="96" height="96" fill="#2563eb" aria-hidden="true">
         <path d="M12 2l7 3v6c0 5-3.5 9.5-7 11-3.5-1.5-7-6-7-11V5l7-3z"></path>
         <path fill="#fff" d="M10.5 13.5l-2-2 1.4-1.4 0.6 0.6 3.9-3.9L16 8.2l-5.5 5.3z"></path>
       </svg>
-      <h1>Seu Guardião <span class="accent">Digital +60</span></h1>
+      <h1>Seu Guardião <span class="accent">Digital 60+</span></h1>
       <p>Protegendo você contra golpes e mensagens suspeitas 💙</p>
     </div>
 
     <div class="login-box">
       <input id="login-email" type="email" placeholder="email@dominio.com" autocomplete="email">
       <input id="login-pass" type="password" placeholder="sua senha" autocomplete="current-password">
+
       <div class="row">
         <button id="btn-signup" class="btn primary">Criar conta</button>
         <button id="btn-login" class="btn neutral">Entrar</button>
       </div>
-      <div class="divider">ou</div>
-      <button id="btn-google" class="btn google">Continuar com Google</button>
-      <button id="btn-apple" class="btn apple">Continuar com Apple</button>
-      <!-- removido: Entrar sem login -->
     </div>
   </section>
 
@@ -94,6 +56,7 @@ document.getElementById("lang-select").addEventListener("change", (e) => {
       <p class="alert-title">⚠️ Alerta!</p>
       <p>Mensagem suspeita detectada: <br><em>"Seu neto precisa de dinheiro urgente!"</em></p>
     </div>
+
     <div class="actions">
       <button id="btn-block" class="btn danger">🚫 Marcar como golpe</button>
       <button id="btn-safe" class="btn primary">✅ É seguro</button>
@@ -107,7 +70,7 @@ document.getElementById("lang-select").addEventListener("change", (e) => {
     <div id="tips-box" class="tips"></div>
   </section>
 
-  <!-- ALERTAS -->
+  <!-- ALERTAS SECUNDÁRIO -->
   <section class="screen" id="screen-alerts">
     <h2>Seus alertas</h2>
     <div id="alerts-list" class="alerts-list">
@@ -132,7 +95,9 @@ document.getElementById("lang-select").addEventListener("change", (e) => {
   </footer>
 
   <div id="toast"></div>
-  <script src="app.js"></script>
-</body>
 
+  <!-- APP.JS (carregado por último, SEM inline scripts) -->
+  <script src="app.js"></script>
+
+</body>
 </html>
