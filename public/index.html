@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardião60+</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app-shell">
+
+<!-- ========================== LOGIN ========================== -->
+<div id="screen-login" class="screen active">
+    <div class="center-card">
+        <h1>Entrar</h1>
+        <p class="muted">Acesse sua conta para continuar</p>
+
+        <div class="form">
+            <input type="email" id="login-email" placeholder="Seu e-mail">
+            <input type="password" id="login-pass" placeholder="Sua senha">
+        </div>
+
+        <button class="btn primary large" onclick="loginUser()">Entrar</button>
+
+        <p class="muted" style="margin-top:10px;">
+            Não tem conta?
+            <span style="color:#1e40af; cursor:pointer;" onclick="openScreen('screen-register')">Criar conta</span>
+        </p>
+    </div>
+</div>
+
+
+<!-- ========================== CADASTRO ========================== -->
+<div id="screen-register" class="screen">
+    <div class="center-card">
+        <h1>Criar Conta</h1>
+
+        <div class="form">
+            <input type="email" id="reg-email" placeholder="Seu e-mail">
+            <input type="password" id="reg-pass" placeholder="Crie uma senha">
+        </div>
+
+        <button class="btn success large" onclick="registerUser()">Criar Conta</button>
+
+        <button class="btn neutral" onclick="openScreen('screen-login')" style="margin-top:12px;">
+            Voltar ao Login
+        </button>
+    </div>
+</div>
+
+
+<!-- ========================== HOME ========================== -->
+<div id="screen-home" class="screen">
+    <div class="center-card">
+        <h1>Bem-vindo ao Guardião60+</h1>
+        <p class="muted">Escolha uma opção abaixo</p>
+
+        <div class="row" style="margin-top:20px;">
+            <button class="btn primary large" onclick="openScreen('screen-messages')">📩 Ver Mensagens</button>
+            <button class="btn neutral large" onclick="openScreen('screen-alerts')">🚨 Ver Alertas</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================== MENSAGENS ========================== -->
+<div id="screen-messages" class="screen">
+    <div class="center-card">
+        <h1>📩 Mensagens Recebidas</h1>
+        <p class="muted">Mensagens importadas do banco.</p>
+
+        <div id="messages-list" class="alerts-list" style="margin-top:18px;">
+            Carregando...
+        </div>
+
+        <div class="row">
+            <button class="btn neutral" onclick="openScreen('screen-home')">Voltar</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ========================== ALERTAS ========================== -->
+<div id="screen-alerts" class="screen">
+    <div class="center-card">
+        <h1>🚨 Alertas</h1>
+        <p class="muted">Alertas identificados pelo Guardião.</p>
+
+        <div id="alerts-list" class="alerts-list" style="margin-top:18px;">
+            Carregando...
+        </div>
+
+        <div class="row">
+            <button class="btn neutral" onclick="openScreen('screen-home')">Voltar</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<!-- ========================== TABBAR ========================== -->
+<div class="tabbar">
+    <div class="tab active" id="tab-login" onclick="openScreen('screen-login')">🔐 Login</div>
+    <div class="tab" id="tab-home" onclick="openScreen('screen-home')">🏠 Início</div>
+    <div class="tab" id="tab-messages" onclick="openScreen('screen-messages')">📩 Mensagens</div>
+    <div class="tab" id="tab-alerts" onclick="openScreen('screen-alerts')">🚨 Alertas</div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ======= MODAL DE ANÁLISE ======= -->
+<div id="analyze-modal" class="center-card" style="
+    display:none;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    width: 90%;
+    max-width: 480px;
+">
+    <h2>Classificar Mensagem</h2>
+    <p id="modal-message-text" class="muted"></p>
+
+    <div class="row" style="margin-top:20px;">
+        <button class="btn danger" onclick="markAsScam()">🛑 Golpe</button>
+        <button class="btn success" onclick="markAsSafe()">🟢 Seguro</button>
+        <button class="btn neutral" onclick="closeModal()">Cancelar</button>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
