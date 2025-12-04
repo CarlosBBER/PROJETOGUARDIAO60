@@ -1,0 +1,11 @@
+/* PROFILE */
+
+#screen-profile .btn {
+    margin-top: 20px;
+  }
+  
+  #screen-profile p {
+    color: var(--muted);
+    font-size: 16px;
+  }
+  

@@ -1,0 +1,32 @@
+/* LOGIN */
+
+#screen-login .hero {
+    margin-top: 40px;
+  }
+  
+  #screen-login h1 {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  
+  .login-box {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .login-box input {
+    width: min(330px, 90vw);
+    padding: 14px;
+    border-radius: var(--radius);
+    border: 1px solid #d7dce3;
+    font-size: 15px;
+  }
+  
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+  

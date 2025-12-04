@@ -1,0 +1,116 @@
+/* ===============================
+   BASE THEME (App Bancário)
+================================*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #0044ff;
+  --primary-hover: #0038d9;
+  --danger: #e63946;
+  --safe: #06d6a0;
+  --background: #f4f7fb;
+  --card: #ffffff;
+  --text: #1a1b1e;
+  --muted: #6c7177;
+  --radius: 14px;
+  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  text-align: center;
+}
+
+/* Tudo centralizado */
+.screen {
+  display: none;
+  padding: 40px 20px;
+  min-height: calc(100vh - 90px);
+}
+
+.screen.active {
+  display: block;
+}
+
+/* Botões padrão */
+.btn {
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.btn.safe {
+  background: var(--safe);
+  color: #fff;
+}
+
+.btn.neutral {
+  background: #3a4454;
+  color: #fff;
+}
+
+/* Cartões */
+.card {
+  background: var(--card);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: min(670px, 90%);
+  margin: 0 auto;
+}
+
+/* Tabbar estilo banco */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--primary);
+  display: flex;
+  justify-content: space-around;
+  padding: 14px 0;
+  color: white;
+}
+
+.tab {
+  font-size: 28px;
+  opacity: .55;
+  cursor: pointer;
+}
+
+.tab.active {
+  opacity: 1;
+  background: rgba(255,255,255,0.18);
+  padding: 6px 12px;
+  border-radius: 10px;
+}

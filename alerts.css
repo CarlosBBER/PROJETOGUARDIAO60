@@ -1,0 +1,24 @@
+/* ALERTAS */
+
+#alerts-list {
+    width: min(750px, 92%);
+    margin: 0 auto;
+  }
+  
+  .alert-card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin: 14px 0;
+    box-shadow: var(--shadow);
+    text-align: left;
+  }
+  
+  .alert-card.high { border-left: 6px solid var(--danger); }
+  .alert-card.medium { border-left: 6px solid #ffa600; }
+  .alert-card.low { border-left: 6px solid var(--safe); }
+  
+  .alert-card small {
+    color: var(--muted);
+  }
+  
